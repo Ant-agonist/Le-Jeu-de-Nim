@@ -175,19 +175,19 @@
     function strategieOrdi() {
       const niveau = document.getElementById("difficulte").value;
       const reste = nombreBatonnets;
-      const optimal = reste % 4;
 
       if (niveau === "facile") {
         return Math.min(1 + Math.floor(Math.random() * 3), reste);
       } else if (niveau === "moyen") {
-        const proba = Math.random();
-        if (proba < 0.7) {
-          return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+        const optimal = reste % 4;
+        if (Math.random() < 0.6 && optimal !== 0) {
+          return Math.min(optimal, reste);
         } else {
           return Math.min(1 + Math.floor(Math.random() * 3), reste);
         }
-      } else {
-        return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+      } else { // difficile
+        const optimal = reste % 4;
+        return optimal === 0 ? 1 : Math.min(optimal, reste);
       }
     }
 
