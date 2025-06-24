@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeu des Bâtonnets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #f6f8f9, #dde6e8);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      justify-content: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+    #batonnets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0;
+      max-width: 90vw;
+    }
+    .batonnet {
+      font-size: 2rem;
+      margin: 5px;
+      transition: transform 0.3s ease;
+    }
+    .batonnet:hover {
+      transform: scale(1.2);
+    }
+    #actions button {
+      background: #ffffff;
+      border: 2px solid #7f8c8d;
+      border-radius: 8px;
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    #actions button:hover {
+      background-color: #bdc3c7;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    #rejouer {
+      margin-top: 20px;
+      display: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #rejouer:hover {
+      background-color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jeu des Bâtonnets</h1>
+  <div id="batonnets"></div>
+  <div id="actions">
+    <button onclick="joueurRetire(1)">Retirer 1</button>
+    <button onclick="joueurRetire(2)">Retirer 2</button>
+    <button onclick="joueurRetire(3)">Retirer 3</button>
+  </div>
+  <div id="message"></div>
+  <button id="rejouer" onclick="initialiserJeu()">Rejouer</button>
+
+  <script>
+    let nombreBatonnets = 20;
+    let tourJoueur = true;
+
+    function initialiserJeu() {
+      nombreBatonnets = 20;
+      tourJoueur = true;
+      document.getElementById('message').textContent = "";
+      document.getElementById('rejouer').style.display = 'none';
+      afficherBatonnets();
+    }
+
+    function afficherBatonnets() {
+      const conteneur = document.getElementById('batonnets');
+      conteneur.innerHTML = '';
+      for (let i = 0; i < nombreBatonnets; i++) {
+        const baton = document.createElement('span');
+        baton.className = 'batonnet';
+        baton.textContent = '🪵';
+        conteneur.appendChild(baton);
+      }
+    }
+
+    function joueurRetire(n) {
+      if (!tourJoueur || nombreBatonnets <= 0) return;
+      if (n < 1 || n > 3 || n > nombreBatonnets) return;
+      nombreBatonnets -= n;
+      verifierFin("Vous");
+      if (nombreBatonnets > 0) {
+        tourJoueur = false;
+        setTimeout(tourOrdi, 700);
+      }
+      afficherBatonnets();
+    }
+
+    function tourOrdi() {
+      let n = strategieOrdi();
+      nombreBatonnets -= n;
+      afficherBatonnets();
+      verifierFin("L'ordinateur");
+      tourJoueur = true;
+    }
+
+    function strategieOrdi() {
+      let reste = nombreBatonnets;
+      let choix = reste % 4;
+      if (choix === 0) choix = 1 + Math.floor(Math.random() * 3);
+      return Math.min(choix, reste);
+    }
+
+    function verifierFin(joueur) {
+      if (nombreBatonnets <= 0) {
+        document.getElementById('message').textContent = `${joueur} avez perdu !`;
+        document.getElementById('rejouer').style.display = 'inline-block';
+        tourJoueur = false;
+      }
+    }
+
+    // Lancement initial
+    initialiserJeu();
+  </script>
+</body>
+</html>
