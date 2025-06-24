@@ -90,10 +90,27 @@
     #rejouer:hover {
       background-color: #27ae60;
     }
+    #niveau {
+      margin-bottom: 15px;
+    }
+    select {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
   <h1>Jeu des Bâtonnets</h1>
+  <div id="niveau">
+    <label for="difficulte">Difficulté : </label>
+    <select id="difficulte">
+      <option value="facile">Facile</option>
+      <option value="moyen">Moyen</option>
+      <option value="difficile" selected>Difficile</option>
+    </select>
+  </div>
   <div id="batonnets"></div>
   <div id="actions">
     <button onclick="joueurRetire(1)">Retirer 1</button>
@@ -156,15 +173,27 @@
     }
 
     function strategieOrdi() {
-      let reste = nombreBatonnets;
-      let choix = reste % 4;
-      if (choix === 0) choix = 1 + Math.floor(Math.random() * 3);
-      return Math.min(choix, reste);
+      const niveau = document.getElementById("difficulte").value;
+      const reste = nombreBatonnets;
+      const optimal = reste % 4;
+
+      if (niveau === "facile") {
+        return Math.min(1 + Math.floor(Math.random() * 3), reste);
+      } else if (niveau === "moyen") {
+        const proba = Math.random();
+        if (proba < 0.7) {
+          return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+        } else {
+          return Math.min(1 + Math.floor(Math.random() * 3), reste);
+        }
+      } else {
+        return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+      }
     }
 
     function verifierFin(joueur) {
       if (nombreBatonnets <= 0) {
-        document.getElementById('message').textContent = `${joueur} a perdu !`;
+        document.getElementById('message').textContent = `${joueur} avez perdu !`;
         document.getElementById('rejouer').style.display = 'inline-block';
         tourJoueur = false;
       }
