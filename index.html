@@ -211,21 +211,23 @@
     }
 
     function strategieOrdi() {
-      const niveau = document.getElementById("difficulte").value;
-      const reste = nombreBatonnets;
-      const optimal = (reste - 1) % 4;
+  const niveau = document.getElementById("difficulte").value;
+  const reste = nombreBatonnets;
+  const optimal = (reste - 1) % 4;
 
-      if (niveau === "facile") {
-        return Math.min(1 + Math.floor(Math.random() * 3), reste);
-      } else if (niveau === "moyen") {
-        return Math.random() < 0.6
-          ? (optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste))
-          : Math.min(1 + Math.floor(Math.random() * 3), reste);
-      } else {
-        return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
-      }
-    }
-
+  if (niveau === "facile") {
+    return Math.min(1 + Math.floor(Math.random() * 3), reste);
+  } else if (niveau === "moyen") {
+    return Math.random() < 0.6
+      ? (optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste))
+      : Math.min(1 + Math.floor(Math.random() * 3), reste);
+  } else {
+    // Difficulté "difficile", mais avec une chance de se tromper
+    return Math.random() < 0.7
+      ? (optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste))
+      : Math.min(1 + Math.floor(Math.random() * 3), reste);
+  }
+}
     function verifierFin(joueur) {
       if (nombreBatonnets <= 0) {
         document.getElementById('message').textContent = `${joueur} avez perdu !`;
