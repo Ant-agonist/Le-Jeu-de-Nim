@@ -10,8 +10,8 @@
       margin: 0;
       padding: 0;
       font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(145deg, #ffe4ec, #e0f7fa);
-      color: #5d4157;
+      background: linear-gradient(145deg, #fdf6f9, #ffeef3);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -19,12 +19,32 @@
       justify-content: center;
       overflow-x: hidden;
     }
+
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: #d45d79;
+      margin-bottom: 0.5rem;
+      color: #d14e72;
       text-shadow: 1px 1px 0 #fff;
     }
+
+    #compteurFleurs {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #6c3a4f;
+    }
+
+    #niveau, #choixNombre {
+      margin-bottom: 10px;
+    }
+
+    select, input[type="number"] {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-left: 8px;
+    }
+
     #batonnets {
       display: flex;
       flex-wrap: wrap;
@@ -33,79 +53,80 @@
       max-width: 95vw;
       transition: all 0.4s ease-in-out;
     }
+
     .batonnet {
       width: 40px;
       height: 40px;
-      margin: 8px;
-      background: none;
-      font-size: 2rem;
-      text-align: center;
-      line-height: 40px;
+      margin: 6px;
+      background-image: url("https://em-content.zobj.net/thumbs/120/apple/354/cherry-blossom_1f338.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
       animation: apparaitre 0.4s ease;
-      cursor: default;
     }
+
     @keyframes apparaitre {
       from { transform: scale(0.5) translateY(-30px); opacity: 0; }
       to { transform: scale(1) translateY(0); opacity: 1; }
     }
+
     .retirer {
       animation: disparaitre 0.4s forwards;
     }
+
     @keyframes disparaitre {
       to {
         transform: scale(0.5) translateY(30px);
         opacity: 0;
       }
     }
+
     #actions button {
-      background: #fff0f5;
-      border: 2px solid #d8bfd8;
+      background: #ffffff;
+      border: 2px solid #d291bc;
       border-radius: 8px;
       padding: 10px 20px;
       margin: 0 10px;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
-      color: #8b008b;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      color: #8e44ad;
     }
+
     #actions button:hover {
-      background-color: #ffe4f4;
+      background-color: #f8e1f4;
       transform: translateY(-2px);
     }
+
     #message {
       margin-top: 20px;
       font-size: 1.2rem;
       font-weight: 600;
-      color: #a05278;
+      color: #c0392b;
     }
+
     #rejouer {
       margin-top: 20px;
       display: none;
       padding: 10px 20px;
       border-radius: 8px;
-      background-color: #ffb6c1;
+      background-color: #2ecc71;
       color: white;
       border: none;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+
     #rejouer:hover {
-      background-color: #ff69b4;
-    }
-    #niveau {
-      margin-bottom: 15px;
-    }
-    select {
-      padding: 8px 12px;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      background-color: #27ae60;
     }
   </style>
 </head>
 <body>
-  <h1>Jeu des Fleurs 🌸</h1>
+  <h1>Jeu des Fleurs</h1>
+  <p id="compteurFleurs">Nombre de fleurs : 21</p>
+
   <div id="niveau">
     <label for="difficulte">Difficulté : </label>
     <select id="difficulte">
@@ -114,24 +135,38 @@
       <option value="difficile" selected>Difficile</option>
     </select>
   </div>
-  <div id="batonnets"></div>
-  <div id="actions">
-    <button onclick="joueurRetire(1)">Cueillir 1 🌸</button>
-    <button onclick="joueurRetire(2)">Cueillir 2 🌸</button>
-    <button onclick="joueurRetire(3)">Cueillir 3 🌸</button>
+
+  <div id="choixNombre">
+    <label for="nombre">Nombre de fleurs : </label>
+    <input type="number" id="nombre" min="5" max="50" value="21" />
   </div>
+
+  <div id="batonnets"></div>
+
+  <div id="actions">
+    <button onclick="joueurRetire(1)">Retirer 1</button>
+    <button onclick="joueurRetire(2)">Retirer 2</button>
+    <button onclick="joueurRetire(3)">Retirer 3</button>
+  </div>
+
   <div id="message"></div>
-  <button id="rejouer" onclick="initialiserJeu()">Rejouer 🌼</button>
+  <button id="rejouer" onclick="initialiserJeu()">Rejouer</button>
 
   <script>
     let nombreBatonnets = 21;
     let tourJoueur = true;
 
     function initialiserJeu() {
-      nombreBatonnets = 20;
+      const input = document.getElementById('nombre');
+      if (input) {
+        nombreBatonnets = parseInt(input.value) || 21;
+      } else {
+        nombreBatonnets = 21;
+      }
       tourJoueur = true;
       document.getElementById('message').textContent = "";
       document.getElementById('rejouer').style.display = 'none';
+      document.getElementById('compteurFleurs').textContent = `Nombre de fleurs : ${nombreBatonnets}`;
       afficherBatonnets();
     }
 
@@ -139,11 +174,10 @@
       const conteneur = document.getElementById('batonnets');
       conteneur.innerHTML = '';
       for (let i = 0; i < nombreBatonnets; i++) {
-        const fleur = document.createElement('div');
-        fleur.className = 'batonnet';
-        fleur.textContent = '🌸';
-        fleur.style.animationDelay = `${i * 0.02}s`;
-        conteneur.appendChild(fleur);
+        const baton = document.createElement('div');
+        baton.className = 'batonnet';
+        baton.style.animationDelay = `${i * 0.02}s`;
+        conteneur.appendChild(baton);
       }
     }
 
@@ -184,12 +218,9 @@
       if (niveau === "facile") {
         return Math.min(1 + Math.floor(Math.random() * 3), reste);
       } else if (niveau === "moyen") {
-        const proba = Math.random();
-        if (proba < 0.6) {
-          return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
-        } else {
-          return Math.min(1 + Math.floor(Math.random() * 3), reste);
-        }
+        return Math.random() < 0.6
+          ? (optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste))
+          : Math.min(1 + Math.floor(Math.random() * 3), reste);
       } else {
         return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
       }
@@ -197,7 +228,7 @@
 
     function verifierFin(joueur) {
       if (nombreBatonnets <= 0) {
-        document.getElementById('message').textContent = `${joueur} avez perdu ! 🌼`;
+        document.getElementById('message').textContent = `${joueur} avez perdu !`;
         document.getElementById('rejouer').style.display = 'inline-block';
         tourJoueur = false;
       }
@@ -207,3 +238,4 @@
   </script>
 </body>
 </html>
+
