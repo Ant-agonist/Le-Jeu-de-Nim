@@ -10,33 +10,50 @@
       margin: 0;
       padding: 0;
       font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(135deg, #f6f8f9, #dde6e8);
+      background: linear-gradient(145deg, #f3f4f6, #e1e8eb);
       color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
       justify-content: center;
+      overflow-x: hidden;
     }
     h1 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
       color: #2c3e50;
+      text-shadow: 1px 1px 0 #fff;
     }
     #batonnets {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       margin: 20px 0;
-      max-width: 90vw;
+      max-width: 95vw;
+      transition: all 0.4s ease-in-out;
     }
     .batonnet {
-      font-size: 2rem;
-      margin: 5px;
-      transition: transform 0.3s ease;
+      width: 10px;
+      height: 60px;
+      margin: 6px;
+      background: linear-gradient(to top, #a0522d, #deb887);
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      animation: apparaitre 0.4s ease;
     }
-    .batonnet:hover {
-      transform: scale(1.2);
+    @keyframes apparaitre {
+      from { transform: scale(0.5) translateY(-30px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .retirer {
+      animation: disparaitre 0.4s forwards;
+    }
+    @keyframes disparaitre {
+      to {
+        transform: scale(0.5) translateY(30px);
+        opacity: 0;
+      }
     }
     #actions button {
       background: #ffffff;
@@ -47,14 +64,17 @@
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     #actions button:hover {
-      background-color: #bdc3c7;
+      background-color: #d0d7da;
+      transform: translateY(-2px);
     }
     #message {
       margin-top: 20px;
       font-size: 1.2rem;
       font-weight: 600;
+      color: #34495e;
     }
     #rejouer {
       margin-top: 20px;
@@ -65,6 +85,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
     #rejouer:hover {
       background-color: #27ae60;
@@ -83,11 +104,11 @@
   <button id="rejouer" onclick="initialiserJeu()">Rejouer</button>
 
   <script>
-    let nombreBatonnets = 21;
+    let nombreBatonnets = 20;
     let tourJoueur = true;
 
     function initialiserJeu() {
-      nombreBatonnets = 21;
+      nombreBatonnets = 20;
       tourJoueur = true;
       document.getElementById('message').textContent = "";
       document.getElementById('rejouer').style.display = 'none';
@@ -98,9 +119,9 @@
       const conteneur = document.getElementById('batonnets');
       conteneur.innerHTML = '';
       for (let i = 0; i < nombreBatonnets; i++) {
-        const baton = document.createElement('span');
+        const baton = document.createElement('div');
         baton.className = 'batonnet';
-        baton.textContent = '🪵';
+        baton.style.animationDelay = `${i * 0.02}s`;
         conteneur.appendChild(baton);
       }
     }
@@ -108,21 +129,30 @@
     function joueurRetire(n) {
       if (!tourJoueur || nombreBatonnets <= 0) return;
       if (n < 1 || n > 3 || n > nombreBatonnets) return;
-      nombreBatonnets -= n;
-      verifierFin("Vous");
-      if (nombreBatonnets > 0) {
-        tourJoueur = false;
-        setTimeout(tourOrdi, 700);
-      }
-      afficherBatonnets();
+
+      tourJoueur = false;
+      retirerBatonnets(n, "Vous", () => setTimeout(tourOrdi, 900));
     }
 
     function tourOrdi() {
       let n = strategieOrdi();
-      nombreBatonnets -= n;
-      afficherBatonnets();
-      verifierFin("L'ordinateur");
-      tourJoueur = true;
+      retirerBatonnets(n, "L'ordinateur", () => {
+        if (nombreBatonnets > 0) tourJoueur = true;
+      });
+    }
+
+    function retirerBatonnets(n, joueur, callback) {
+      const conteneur = document.getElementById('batonnets');
+      const batonnets = conteneur.querySelectorAll('.batonnet');
+      for (let i = 0; i < n && i < batonnets.length; i++) {
+        batonnets[i].classList.add('retirer');
+      }
+      setTimeout(() => {
+        nombreBatonnets -= n;
+        afficherBatonnets();
+        verifierFin(joueur);
+        if (callback) callback();
+      }, 500);
     }
 
     function strategieOrdi() {
@@ -140,7 +170,6 @@
       }
     }
 
-    // Lancement initial
     initialiserJeu();
   </script>
 </body>
