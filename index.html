@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jeu des Bâtonnets</title>
+  <title>Jeu des Fleurs</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(145deg, #f3f4f6, #e1e8eb);
-      color: #333;
+      background: linear-gradient(145deg, #ffe4ec, #e0f7fa);
+      color: #5d4157;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -22,7 +22,7 @@
     h1 {
       font-size: 2.5rem;
       margin-bottom: 1rem;
-      color: #2c3e50;
+      color: #d45d79;
       text-shadow: 1px 1px 0 #fff;
     }
     #batonnets {
@@ -34,13 +34,15 @@
       transition: all 0.4s ease-in-out;
     }
     .batonnet {
-      width: 10px;
-      height: 60px;
-      margin: 6px;
-      background: linear-gradient(to top, #a0522d, #deb887);
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 40px;
+      height: 40px;
+      margin: 8px;
+      background: none;
+      font-size: 2rem;
+      text-align: center;
+      line-height: 40px;
       animation: apparaitre 0.4s ease;
+      cursor: default;
     }
     @keyframes apparaitre {
       from { transform: scale(0.5) translateY(-30px); opacity: 0; }
@@ -56,39 +58,40 @@
       }
     }
     #actions button {
-      background: #ffffff;
-      border: 2px solid #7f8c8d;
+      background: #fff0f5;
+      border: 2px solid #d8bfd8;
       border-radius: 8px;
       padding: 10px 20px;
       margin: 0 10px;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
+      color: #8b008b;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     #actions button:hover {
-      background-color: #d0d7da;
+      background-color: #ffe4f4;
       transform: translateY(-2px);
     }
     #message {
       margin-top: 20px;
       font-size: 1.2rem;
       font-weight: 600;
-      color: #34495e;
+      color: #a05278;
     }
     #rejouer {
       margin-top: 20px;
       display: none;
       padding: 10px 20px;
       border-radius: 8px;
-      background-color: #2ecc71;
+      background-color: #ffb6c1;
       color: white;
       border: none;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
     #rejouer:hover {
-      background-color: #27ae60;
+      background-color: #ff69b4;
     }
     #niveau {
       margin-bottom: 15px;
@@ -102,7 +105,7 @@
   </style>
 </head>
 <body>
-  <h1>Jeu des Bâtonnets</h1>
+  <h1>Jeu des Fleurs 🌸</h1>
   <div id="niveau">
     <label for="difficulte">Difficulté : </label>
     <select id="difficulte">
@@ -113,12 +116,12 @@
   </div>
   <div id="batonnets"></div>
   <div id="actions">
-    <button onclick="joueurRetire(1)">Retirer 1</button>
-    <button onclick="joueurRetire(2)">Retirer 2</button>
-    <button onclick="joueurRetire(3)">Retirer 3</button>
+    <button onclick="joueurRetire(1)">Cueillir 1 🌸</button>
+    <button onclick="joueurRetire(2)">Cueillir 2 🌸</button>
+    <button onclick="joueurRetire(3)">Cueillir 3 🌸</button>
   </div>
   <div id="message"></div>
-  <button id="rejouer" onclick="initialiserJeu()">Rejouer</button>
+  <button id="rejouer" onclick="initialiserJeu()">Rejouer 🌼</button>
 
   <script>
     let nombreBatonnets = 20;
@@ -136,10 +139,11 @@
       const conteneur = document.getElementById('batonnets');
       conteneur.innerHTML = '';
       for (let i = 0; i < nombreBatonnets; i++) {
-        const baton = document.createElement('div');
-        baton.className = 'batonnet';
-        baton.style.animationDelay = `${i * 0.02}s`;
-        conteneur.appendChild(baton);
+        const fleur = document.createElement('div');
+        fleur.className = 'batonnet';
+        fleur.textContent = '🌸';
+        fleur.style.animationDelay = `${i * 0.02}s`;
+        conteneur.appendChild(fleur);
       }
     }
 
@@ -173,29 +177,27 @@
     }
 
     function strategieOrdi() {
-  const niveau = document.getElementById("difficulte").value;
-  const reste = nombreBatonnets;
+      const niveau = document.getElementById("difficulte").value;
+      const reste = nombreBatonnets;
+      const optimal = (reste - 1) % 4;
 
-  const optimal = (reste - 1) % 4;
-
-  if (niveau === "facile") {
-    return Math.min(1 + Math.floor(Math.random() * 3), reste);
-  } else if (niveau === "moyen") {
-    const proba = Math.random();
-    if (proba < 0.6) {
-      return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
-    } else {
-      return Math.min(1 + Math.floor(Math.random() * 3), reste);
+      if (niveau === "facile") {
+        return Math.min(1 + Math.floor(Math.random() * 3), reste);
+      } else if (niveau === "moyen") {
+        const proba = Math.random();
+        if (proba < 0.6) {
+          return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+        } else {
+          return Math.min(1 + Math.floor(Math.random() * 3), reste);
+        }
+      } else {
+        return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
+      }
     }
-  } else {
-    return optimal === 0 ? Math.min(1 + Math.floor(Math.random() * 3), reste) : Math.min(optimal, reste);
-  }
-}
-
 
     function verifierFin(joueur) {
       if (nombreBatonnets <= 0) {
-        document.getElementById('message').textContent = `${joueur} avez perdu !`;
+        document.getElementById('message').textContent = `${joueur} avez perdu ! 🌼`;
         document.getElementById('rejouer').style.display = 'inline-block';
         tourJoueur = false;
       }
